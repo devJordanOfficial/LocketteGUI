@@ -1,0 +1,6 @@
+name: Lockette
+version: ${project.version}
+main: com.infamousgc.lockette.Main
+api-version: '1.21'
+authors: [ devJordan ]
+description: Lock important inventories such as chest's and only allow certain people to access them. Watch out for lock pickers!
