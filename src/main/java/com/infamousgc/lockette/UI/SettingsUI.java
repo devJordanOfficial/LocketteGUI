@@ -31,37 +31,7 @@ public class SettingsUI extends UserInterface {
     protected void initializeItems() {
 
         // Privacy Settings Button
-        ItemStack privacyItem = new ItemStack(Material.REDSTONE_TORCH);
-        ItemMeta privacyMeta = privacyItem.getItemMeta();
-        privacyMeta.displayName(Component.text("Change Privacy")
-                .decoration(TextDecoration.BOLD, true)
-                .decoration(TextDecoration.ITALIC, false)
-                .color(NamedTextColor.YELLOW));
 
-        privacyMeta.lore(Arrays.asList(
-                Component.empty(),
-                Component.text("Click to cycle privacy state", NamedTextColor.GRAY),
-                Component.text("Public - Anyone can access this chest as if it was not locked", NamedTextColor.GRAY),
-                Component.text("Restricted - Only people you allow can access this chest", NamedTextColor.GRAY),
-                Component.text("Private - Only you can access this chest", NamedTextColor.GRAY),
-                Component.empty(),
-                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-                        .append(Component.text("Public")
-                                .decoration(TextDecoration.ITALIC, false)
-                                .color(getCurrentPrivacy().equals(LockManager.Privacy.PUBLIC) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
-                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-                        .append(Component.text("Restricted")
-                                .decoration(TextDecoration.ITALIC, false)
-                                .color(getCurrentPrivacy().equals(LockManager.Privacy.RESTRICTED) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
-                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
-                        .append(Component.text("Private")
-                                .decoration(TextDecoration.ITALIC, false)
-                                .color(getCurrentPrivacy().equals(LockManager.Privacy.PRIVATE) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
-                Component.empty(),
-                keybindComponent("Left-Click", "Cycle")
-        ));
-        privacyItem.setItemMeta(privacyMeta);
-        inv.setItem(PRIVACY_SLOT, privacyItem);
 
         // Access Control Button
         ItemStack accessItem = new ItemStack(Material.PLAYER_HEAD);
@@ -92,17 +62,46 @@ public class SettingsUI extends UserInterface {
                 LockManager.Privacy newPrivacy = LockManager.Privacy.values()[(currentPrivacy.ordinal() + 1) % LockManager.Privacy.values().length];
                 lockManager.setPrivacy(chestLocation, newPrivacy);
                 player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1.0f, 1.0f);
-                updateInventory();
+                updatePrivacyItem();
+                player.updateInventory();
             }
-            case ACCESS_SLOT -> {} // TODO: More robust update method, probably create item in its own method and call it when needed
+            case ACCESS_SLOT -> {}
             // TODO: Log click types and such to see triple click for 2 rapid click bug
         }
     }
 
-    private void updateInventory() {
-        inv.clear();
-        initializeItems();
-        player.updateInventory();
+    private void updatePrivacyItem() {
+        ItemStack item = new ItemStack(Material.REDSTONE_TORCH);
+        ItemMeta meta = item.getItemMeta();
+        meta.displayName(Component.text("Change Privacy")
+                .decoration(TextDecoration.BOLD, true)
+                .decoration(TextDecoration.ITALIC, false)
+                .color(NamedTextColor.YELLOW));
+
+        meta.lore(Arrays.asList(
+                Component.empty(),
+                Component.text("Click to cycle privacy state", NamedTextColor.GRAY),
+                Component.text("Public - Anyone can access this chest as if it was not locked", NamedTextColor.GRAY),
+                Component.text("Restricted - Only people you allow can access this chest", NamedTextColor.GRAY),
+                Component.text("Private - Only you can access this chest", NamedTextColor.GRAY),
+                Component.empty(),
+                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
+                        .append(Component.text("Public")
+                                .decoration(TextDecoration.ITALIC, false)
+                                .color(getCurrentPrivacy().equals(LockManager.Privacy.PUBLIC) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
+                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
+                        .append(Component.text("Restricted")
+                                .decoration(TextDecoration.ITALIC, false)
+                                .color(getCurrentPrivacy().equals(LockManager.Privacy.RESTRICTED) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
+                Component.text("» ", NamedTextColor.DARK_GRAY).decoration(TextDecoration.ITALIC, false)
+                        .append(Component.text("Private")
+                                .decoration(TextDecoration.ITALIC, false)
+                                .color(getCurrentPrivacy().equals(LockManager.Privacy.PRIVATE) ? NamedTextColor.YELLOW : NamedTextColor.GRAY)),
+                Component.empty(),
+                keybindComponent("Left-Click", "Cycle")
+        ));
+        item.setItemMeta(meta);
+        inv.setItem(PRIVACY_SLOT, item);
     }
 
     private LockManager.Privacy getCurrentPrivacy() {

@@ -19,6 +19,6 @@ public final class Main extends JavaPlugin {
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new InventoryClick(), this);
-        pm.registerEvents(new PlayerInteract(), this);
+        pm.registerEvents(new PlayerInteract(this), this);
     }
 }
